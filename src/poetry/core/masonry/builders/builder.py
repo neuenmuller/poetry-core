@@ -393,7 +393,7 @@ class BuildIncludeFile:
         return str(self.path)
 
     def relative_to_project_root(self) -> Path:
-        return self.original_path.relative_to(self.project_root)
+        return self.path.relative_to(self.project_root)
 
     def relative_to_source_root(self) -> Path:
         if self.source_root is not None:
