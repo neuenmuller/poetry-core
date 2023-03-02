@@ -283,8 +283,10 @@ class Builder:
 
             if "callable" in specification:
                 warnings.warn(
-                    f"Use of callable in script specification ({name}) is deprecated."
-                    " Use reference instead.",
+                    (
+                        f"Use of callable in script specification ({name}) is"
+                        " deprecated. Use reference instead."
+                    ),
                     DeprecationWarning,
                 )
                 specification = {
@@ -374,6 +376,8 @@ class BuildIncludeFile:
         else:
             self.path = self.path
 
+        # preserve the path before resolving symlinks
+        self.original_path = Path(self.path)
         self.path = self.path.resolve()
 
     def __eq__(self, other: object) -> bool:
@@ -389,10 +393,10 @@ class BuildIncludeFile:
         return str(self.path)
 
     def relative_to_project_root(self) -> Path:
-        return self.path.relative_to(self.project_root)
+        return self.original_path.relative_to(self.project_root)
 
     def relative_to_source_root(self) -> Path:
         if self.source_root is not None:
-            return self.path.relative_to(self.source_root)
+            return self.original_path.relative_to(self.source_root)
 
-        return self.path
+        return self.original_path
