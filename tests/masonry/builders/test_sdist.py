@@ -410,6 +410,34 @@ def test_with_src_module_file() -> None:
         assert "module_src-0.1/src/module_src.py" in tar.getnames()
 
 
+def test_symlinked_additional_files_are_copied() -> None:
+    poetry = Factory().create_poetry(project("symlinked_additional_files"))
+
+    builder = SdistBuilder(poetry)
+    builder.build()
+
+    sdist = (
+        fixtures_dir
+        / "symlinked_additional_files"
+        / "dist"
+        / "symlinked_additional_files-0.1.tar.gz"
+    )
+
+    assert sdist.exists()
+
+    with tarfile.open(str(sdist), "r") as tar:
+        # symlink is copied as real file
+        assert "symlinked_additional_files-0.1/pyproject.toml" in tar.getnames()
+        root_pyproject_file = tar.getmember(
+            "symlinked_additional_files-0.1/pyproject.toml"
+        )
+        assert root_pyproject_file.isfile()
+        assert not root_pyproject_file.issym()
+
+        # original file is not copied
+        assert "symlinked_additional_files-0.1/src/pyproject.toml" not in tar.getnames()
+
+
 def test_with_src_module_dir() -> None:
     poetry = Factory().create_poetry(project("source_package"))
 
