@@ -369,8 +369,8 @@ class BuildIncludeFile:
         :param source_root: the root path to resolve to
         """
         self.path = Path(path)
-        self.project_root = Path(project_root).resolve()
-        self.source_root = None if not source_root else Path(source_root).resolve()
+        self.project_root = Path(project_root)
+        self.source_root = None if not source_root else Path(source_root)
         if not self.path.is_absolute() and self.source_root:
             self.path = self.source_root / self.path
         else:
